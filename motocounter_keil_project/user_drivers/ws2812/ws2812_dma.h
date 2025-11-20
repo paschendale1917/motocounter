@@ -1,0 +1,80 @@
+//таймер TIM3 нужно настроить на частоту 800 к√ц
+
+#ifndef ws2812_dma_H_
+#define ws2812_dma_H_
+
+#include "stm32g0xx.h"
+#include "../SysTick/systick_delay.h"
+
+
+#define F_TIM3 																												32000000 	 	//зависит от настроек в секции RCC
+#define F_PWM_TIM3 																											800000 			//частота Ў»ћ 800 000 √ц
+
+#define NUM_LEDS_MATRIX																										8
+#define MATRIX_AMOUNT																										1
+#define NUM_LEDS  																											NUM_LEDS_MATRIX*MATRIX_AMOUNT	//количество светодиодов
+#define NUM_BYTES           																								NUM_LEDS*3
+#define BIT_TIME																											0x0028				// 1/32000000=0,00000001562=0,03125 микросекунды длитс€ 1 тик таймера//по даташиту врем€ дл€ передачи 1 или 0 дл€ ws2812 1.25 мкс, отсюда 1,25/0,03125 =40 тиков таймера требуетс€ дл€ передачи одного бита//40==0x0028
+#define WS2812_1    																										BIT_TIME/3*2 	//количество тиков дл€ передачи 1(из даташита на 2812 0.4 мкс или одна треть всего времени посылки бита)
+#define WS2812_0    																										BIT_TIME/3    //0.85 мкс
+#define WS2812_RESET 																										BIT_TIME*50
+
+
+#define HALF_TRANSFER_COMPLETE_WS2812																						DMA1->ISR&DMA_ISR_HTIF1
+#define TOTAL_TRANSFER_COMPLETE_WS2812																						DMA1->ISR&DMA_ISR_TCIF1
+#define RESET_HT_FLAG_WS2812																						  		SET_BIT(DMA1->IFCR,DMA_IFCR_CHTIF1)
+#define RESET_TC_FLAG_WS2812																								SET_BIT(DMA1->IFCR,DMA_IFCR_CTCIF1)
+
+
+#define WHITE_LED     																										0xFFFFFF
+#define OFF_LED      																										0x000000
+#define BLUE_LED        																									0x0000FF
+#define RED_LED         																									0xFF0000
+#define MAGENTA_LED     																									0x00F81F
+#define GREEN_LED       																									0x00ff00
+#define CYAN_LED        																									0x00FFFF
+#define YELLOW_LED      																									0xFFE000
+#define BRED_LED        																									0xF81F61
+#define GBLUE_LED      																										0x0F70F0
+#define GAINSBORO_LED       																								0xDCDCDC
+#define LIGHTBLUE_LED   																									0x007D7C
+#define ORANGE_LED                                             																0xFA2000
+#define PURPLE_LED																											0x800080
+#define TURQUOISE_LED																										0x40E0D0
+#define CRIMSON_LED																											0xDC143C
+
+//extern uint8_t  color_array[];
+
+extern uint8_t bytes_array[];
+extern uint8_t pwm_array[];
+extern uint8_t rgb_buffer[];
+
+extern const uint8_t gammaTable[];
+extern uint8_t colors[];
+
+
+void get_high_pwm_data(void);
+void get_low_pwm_data(void);
+void send_data_leds(void);
+void led_set_RGB(uint16_t index, uint8_t r, uint8_t g, uint8_t b);
+void led_set_all_RGB(uint8_t r, uint8_t g, uint8_t b);
+void setcolor(uint32_t color);
+void bus_reset(void);
+void reset_pwmbuffer(void);
+
+void policecolor_breathe(void);
+void start_effect(void);
+void policecolor_blink(void);
+
+void init_ws2812(void);
+void ws2812_send(void);
+void ws2812_setcolor(uint16_t num_leds, uint32_t color);
+void ws2812_buff_clear(void);
+void init_gpio_ws2812(void);
+void ws2812_reset(void);
+void leds_off(void);
+
+	
+
+
+#endif
