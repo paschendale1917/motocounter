@@ -25,7 +25,7 @@
 - EEPROM на I2C2
 
 ###	Клонирование репозитория
-git clone https://github.com/paschendale1917/avr_test.git
+git clone https://github.com/paschendale1917/motocounter.git
 
 ###	Принцип работы:
 После подачи питания устройство считывает из EEPROM настроечные константы, измеряет напряжение в бортовой сети и отображает на главном экране
