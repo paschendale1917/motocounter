@@ -7,10 +7,10 @@ uint8_t clear_display_flag=1;
 uint8_t firstinit[]={0,250,0,0,0,0,50,0,200,125}; //массив для первоначального инита //2byte motohours,2byte hours,1byte min, 1byte sec,1byte bright,2 byte divider,1byte vof
 uint8_t firstinit_flag=0;
 uint8_t emergency_saving_flag=0;
-int16_t redcomponent=0;
-int16_t greencomponent=0;
-int16_t bluecomponent=0;
-volatile uint32_t color=0;
+volatile uint8_t redcomponent=0xFF;
+volatile uint8_t greencomponent=0;
+volatile uint8_t bluecomponent=0;
+volatile uint32_t color=0xFF0000; //по умолчанию красный
 
 uint16_t motohours=0;
 float vof=12.5;										//напряжение включения счетчика моточасов
@@ -40,6 +40,11 @@ void startup_settings(void){
 	brightness=eeprom_read_byte(EE24C02_ADDR,BACKLIGHT_CELL);
 	divider=(float)(eeprom_read_uint16(EE24C02_ADDR, DIVIDER_CELL))/1000;
 	vof=(float)(eeprom_read_byte(EE24C02_ADDR,VOF_CELL))/10;
+	redcomponent=eeprom_read_byte(EE24C02_ADDR,RED_CELL);
+	greencomponent=eeprom_read_byte(EE24C02_ADDR,GREEN_CELL);
+	bluecomponent=eeprom_read_byte(EE24C02_ADDR,BLUE_CELL);
+	color&=~0xffffffff;
+	color|=(redcomponent<<16)|(greencomponent<<8)|bluecomponent;
 }
 
 void menu_process(void){
@@ -316,6 +321,7 @@ void about_handler(void){
 
 void motohour_handler(void){
 	menustate=MOTOHOUR;
+	static char buf[10]="";
 	if(clear_display_flag){													//очистить нужно единожды, поэтому был введен флаг очистки дисплея
 		clear_current_menu(X_MENU_OFFSET,Y_MENU_OFFSET);
 		draw_border(ORANGE);
@@ -337,30 +343,31 @@ void motohour_handler(void){
 			}else{
 			  motohours-=10;
 			 }
-			motohours<1?motohours=0:0;
-			//draw_string(50,20+Y_MENU_OFFSET,buf,-2,BACKGROUND_COLOR,BACKGROUND_COLOR,BigFont); //приходится перерисовывать строку при каждом повороте вала энкодера, чтобы не оставалось фантомов при уменьшении кол-ва разрядов числа
-			set_brigtness(brightness);
+			!motohours?motohours=999:0;
 			beep(BEEP_TIME);
 			resetButton();
 			break ;
 				
 		case BUTTON_RIGHT:
-			motohours+=10;
-			motohours>990?motohours=999:0;
-			//draw_string(50,20+Y_MENU_OFFSET,buf,-2,BACKGROUND_COLOR,BACKGROUND_COLOR,BigFont);
-			set_brigtness(brightness);
+			if(motohours==990){
+				motohours+=9;
+			}else{
+			  motohours+=10;
+			 }
+			motohours>999?motohours=0:0;
 			beep(BEEP_TIME);
 			resetButton();
 			break ;
 				
 		default:
-			draw_number(60,50,motohours,1,BACKGROUND_COLOR,RED,DotMatrix_M_Slash);
-			if(motohours<100){
-				draw_number(95,50,6,1,BACKGROUND_COLOR, BACKGROUND_COLOR, DotMatrix_M_Slash); //стер разряд десятковщаписью любого числа, когда значение яркости стало меньше 100
-			}
-			if(motohours<1000){
-				draw_number(110,50,6,1,BACKGROUND_COLOR, BACKGROUND_COLOR, DotMatrix_M_Slash); //стер разрядs щаписью любого числа, когда значение яркости стало меньше 1000
-			}
+			sprintf(buf,"%3u",motohours);
+			draw_string(45,50,buf,1,BACKGROUND_COLOR,RED,DotMatrix_M_Slash);
+//			if(motohours<100){
+//				draw_number(95,50,6,1,BACKGROUND_COLOR, BACKGROUND_COLOR, DotMatrix_M_Slash); //стер разряд десятковщаписью любого числа, когда значение яркости стало меньше 100
+//			}
+//			if(motohours<1000){
+//				draw_number(110,50,6,1,BACKGROUND_COLOR, BACKGROUND_COLOR, DotMatrix_M_Slash); //стер разрядs щаписью любого числа, когда значение яркости стало меньше 1000
+//			}
 			break ;
 		}
 	
@@ -409,7 +416,7 @@ void time_tracker(void){
 	if(voltage>vof){		
 		if(time.hour>=motohours&&time.sec%2==0){
 			beep_on();
-			setcolor(RED_LED);
+			setcolor(color);
 			send_data_leds();
    } else {
 	   beep_off();
@@ -521,6 +528,7 @@ void time_tracker(void){
  void redcomponent_handler(void){
 	char buf[10]="";
 	menustate=REDCOMPONENT;
+	const uint8_t line_height = (*(MENU_FONT + 1) + POINTER_TAB);
 	if(clear_display_flag){													
 		draw_border(ORANGE);
 		clear_display_flag=0;
@@ -532,12 +540,12 @@ void time_tracker(void){
 		break ;
 		case BUTTON_MENUITEMBACK:
 			leds_off();
-			//eeprom_write_byte(EE24C02_ADDR,VOF_CELL,vof*10);
+			eeprom_write_byte(EE24C02_ADDR,RED_CELL,redcomponent);
 			return_from_handler();
 			break ;
 		case BUTTON_LEFT:
-			color&=0xff0000;
-			color|=((redcomponent-=5)<<16);
+			color&=~0x00ff0000;
+			color|=((redcomponent-=1)<<16);
 			redcomponent<0?redcomponent=255:0;
 			bus_reset();
 			setcolor(color);
@@ -547,8 +555,8 @@ void time_tracker(void){
 			break ;
 				
 		case BUTTON_RIGHT:
-			color&=0xff0000;
-			color|=((redcomponent+=5)<<16);
+			color&=~0x00ff0000;
+			color|=((redcomponent+=1)<<16);
 			redcomponent>255?redcomponent=0:0;
 			bus_reset();
 			setcolor(color);
@@ -559,7 +567,9 @@ void time_tracker(void){
 				
 		default:
 			sprintf(buf,"%3u",redcomponent);
-			draw_string(X_MENU_OFFSET+MENU_FONT[0] * 10,Y_MENU_OFFSET ,buf,1,BACKGROUND_COLOR,RED,MENU_FONT);
+			draw_string(X_MENU_OFFSET+MENU_FONT[0]*10,Y_MENU_OFFSET ,buf,1,BACKGROUND_COLOR,RED,MENU_FONT);
+			draw_string(4,Y_MENU_OFFSET+ 5 * line_height ,"RESULT",1,BACKGROUND_COLOR,WHITE,MENU_FONT);
+			draw_hexnumber(X_MENU_OFFSET+MENU_FONT[0]*7,Y_MENU_OFFSET+ 5 * line_height,color,1,BACKGROUND_COLOR,WHITE,MENU_FONT);
 			break ;
 		}
 	
@@ -580,12 +590,12 @@ void time_tracker(void){
 		break ;
 		case BUTTON_MENUITEMBACK:
 			leds_off();
-			//eeprom_write_byte(EE24C02_ADDR,VOF_CELL,vof*10);
+			eeprom_write_byte(EE24C02_ADDR,GREEN_CELL,greencomponent);
 			return_from_handler();
 			break ;
 		case BUTTON_LEFT:
-			color&=0x00ff00;
-			color|=((greencomponent-=5)<<8);
+			color&=~0x0000ff00;
+			color|=((greencomponent-=1)<<8);
 			greencomponent<0?greencomponent=255:0;
 			bus_reset();
 			setcolor(color);
@@ -595,8 +605,8 @@ void time_tracker(void){
 			break ;
 				
 		case BUTTON_RIGHT:
-			color&=0x00ff00;
-			color|=((greencomponent+=5)<<8);
+			color&=~0x0000ff00;
+			color|=((greencomponent+=1)<<8);
 			greencomponent>255?greencomponent=0:0;
 			bus_reset();
 			setcolor(color);
@@ -608,6 +618,8 @@ void time_tracker(void){
 		default:
 			sprintf(buf,"%3u",greencomponent);
 			draw_string(X_MENU_OFFSET+MENU_FONT[0] * 10,Y_POINTER_OFFSET + 1 * line_height,buf,1,BACKGROUND_COLOR,GREEN,MENU_FONT);
+			draw_string(4,Y_MENU_OFFSET+ 5 * line_height ,"RESULT",1,BACKGROUND_COLOR,WHITE,MENU_FONT);
+			draw_hexnumber(X_MENU_OFFSET+MENU_FONT[0]*7,Y_MENU_OFFSET+ 5 * line_height,color,1,BACKGROUND_COLOR,WHITE,MENU_FONT);
 			break ;
 		} 
  }
@@ -628,12 +640,12 @@ void time_tracker(void){
 		break ;
 		case BUTTON_MENUITEMBACK:
 			leds_off();
-			//eeprom_write_byte(EE24C02_ADDR,VOF_CELL,vof*10);
+			eeprom_write_byte(EE24C02_ADDR,BLUE_CELL,bluecomponent);
 			return_from_handler();
 			break ;
 		case BUTTON_LEFT:
 			color&=~0x000000ff; //сбрасываем значения цвета, чтобы визуально было заметны изменения при ковырянии в менюшке
-			color|=(bluecomponent-=5);
+			color|=(bluecomponent-=1);
 			bluecomponent<0?bluecomponent=255:0;
 			bus_reset();
 			setcolor(color);
@@ -644,7 +656,7 @@ void time_tracker(void){
 				
 		case BUTTON_RIGHT:
 			color&=~0x000000ff;
-			color|=(bluecomponent+=5);
+			color|=(bluecomponent+=1);
 			bluecomponent>255?bluecomponent=0:0;
 			bus_reset();
 			setcolor(color);
@@ -656,6 +668,8 @@ void time_tracker(void){
 		default:
 			sprintf(buf,"%3u",bluecomponent);
 			draw_string(X_MENU_OFFSET+MENU_FONT[0] * 10,Y_POINTER_OFFSET + 2 * line_height,buf,1,BACKGROUND_COLOR,BLUE,MENU_FONT);
+			draw_string(4,Y_MENU_OFFSET+ 5 * line_height ,"RESULT",1,BACKGROUND_COLOR,WHITE,MENU_FONT);
+			draw_hexnumber(X_MENU_OFFSET+MENU_FONT[0]*7,Y_MENU_OFFSET+ 5 * line_height,color,1,BACKGROUND_COLOR,WHITE,MENU_FONT);
 			break ;
 		} 	 
  }

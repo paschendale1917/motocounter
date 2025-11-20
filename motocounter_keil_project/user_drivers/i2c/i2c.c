@@ -1,7 +1,6 @@
 #include "i2c.h"
 #include "stm32g0xx.h"
 
-
 #define FREQ400KHZ
 
 uint8_t page[16]={0};
@@ -98,7 +97,7 @@ void i2c_stop(void){
 }
 
 
-void i2c_write_byte_wr(uint8_t byte){ //не разобрался почему, но чтение байта  после отправки адреса устройства и адреса регистра возможно только с  функцией в данном виде
+void i2c_write_byte_wr(uint8_t byte){ 														//не разобрался почему, но чтение байта  после отправки адреса устройства и адреса регистра возможно только с  функцией в данном виде
 	
 	while (!(I2C2->ISR & I2C_ISR_TC)&&(!(I2C2->ISR & I2C_ISR_TXIS))) {
 		set_error_flag(2);

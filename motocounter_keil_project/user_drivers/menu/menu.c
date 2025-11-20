@@ -10,7 +10,7 @@ const char  menu_it1[]="COUNTER SETUP";
 const char  menu_it2[]="VOLTMETER SETUP";
 const char  menu_it3[]="LCD BRIGHTNESS";
 const char  menu_it4[]="FLASHLIGHT";
-const char  menu_it5[]="LEDS SETTINGS";
+const char  menu_it5[]="WARNING COLOR";
 const char  menu_it6[]="RESET DEVICE";
 const char  menu_it7[]="ABOUT";
 

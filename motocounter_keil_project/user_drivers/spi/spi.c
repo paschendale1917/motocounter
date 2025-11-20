@@ -22,8 +22,8 @@ void init_master_spi(void){
 	DISABLE(SPI1);
 	ENABLE_FULLDUPLEX(SPI1); 					
 	SPI_MODE_0(SPI1);
-	//LSBFIRST(SPI1);												//здесь какой-то косячило: шина виснет, если установить lsbfirst							
-	BAUDRATE_2(SPI1);												//baud rate (APB/4)=64MHz/8=8 Mhz для max 7219(clock clk period=100ns,1/100ns=10MHz)//смотри секцию RCC
+	//LSBFIRST(SPI1);																				//здесь какой-то косячило: шина виснет, если установить lsbfirst							
+	BAUDRATE_2(SPI1);																				//baud rate (APB/4)=64MHz/8=8 Mhz для max 7219(clock clk period=100ns,1/100ns=10MHz)//смотри секцию RCC
 	DISABLE_DMA_TX(SPI1);
 	DISABLE_DMA_RX(SPI1);
 	//DATASIZE_16(SPI1);
@@ -51,12 +51,12 @@ uint8_t spi_sendbyte(uint8_t byte){
 
 uint16_t spi_sendword(uint16_t word){
 	uint32_t cpu_tact=10000;
-	CLEAR_BIT(SPI1->CR2,SPI_CR2_FRXTH);     //RXNE event, if 16 bit received
+	CLEAR_BIT(SPI1->CR2,SPI_CR2_FRXTH);    															 //RXNE event, if 16 bit received
 	while(!(SPI1->SR & SPI_SR_TXE)){
 				cpu_tact--;
 		if(!cpu_tact)return ERROR;
 	};
-	*(__IO uint8_t *)(&SPI1->DR)=word>>8; //на 030 микроконтроллерах регистр всегда передает в 2хбайтном виде, поэтому нужно привести к 8 битному числу
+	*(__IO uint8_t *)(&SPI1->DR)=word>>8; 															//на 030 микроконтроллерах регистр по умолчанию всегда передает в 2хбайтном виде, поэтому нужно привести к 8 битному числу
 	*(__IO uint8_t *)(&SPI1->DR)=(uint8_t)word;  
 	while(!(SPI1->SR & SPI_SR_RXNE)){
 				cpu_tact--;

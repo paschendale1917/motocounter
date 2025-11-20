@@ -3,8 +3,6 @@
 
 #include "stm32g0xx.h"
 #include "../SysTick/systick_delay.h"
-//#include "timer.h"
-//#include "ws2812_dma.h"
 
 #define F_BUZ_TIM 							64000000 					//зависит от настроек в секции RCC
 #define F_BUZ_PWM 							2000						//частота ШИМ 4 КГц(резонансная частота буззера)
