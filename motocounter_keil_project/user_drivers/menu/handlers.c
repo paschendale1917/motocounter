@@ -4,13 +4,13 @@ uint8_t menustate = MAINSCREEN;
 uint8_t mainscreen_flag=1;
 uint8_t clear_display_flag=1;
 
-uint8_t firstinit[]={0,250,0,0,0,0,50,0,200,125}; //массив дл€ первоначального инита //2byte motohours,2byte hours,1byte min, 1byte sec,1byte bright,2 byte divider,1byte vof
+uint8_t firstinit[]={0,250,0,0,0,0,50,0,151,125}; 	//массив дл€ первоначального инита //2bytes motohours,2bytes hours,1byte min, 1byte sec,1byte bright,2bytes divider,1byte vof
 uint8_t firstinit_flag=0;
 uint8_t emergency_saving_flag=0;
 volatile uint8_t redcomponent=0xFF;
 volatile uint8_t greencomponent=0;
 volatile uint8_t bluecomponent=0;
-volatile uint32_t color=0xFF0000; //по умолчанию красный
+volatile uint32_t color=0xFF0000; 					//по умолчанию красный
 
 uint16_t motohours=0;
 float vof=12.5;										//напр€жение включени€ счетчика моточасов
@@ -262,7 +262,7 @@ void reset_handler(void){
 
 void flashlight_handler(void){
 	menustate=FLASHLIGHT;
-	if(clear_display_flag){													//очистить нужно единожды, поэтому был введен флаг очистки диспле€
+	if(clear_display_flag){													
 		clear_current_menu(X_MENU_OFFSET,Y_MENU_OFFSET);
 		clear_display_flag=0;
 	}
@@ -322,7 +322,7 @@ void about_handler(void){
 void motohour_handler(void){
 	menustate=MOTOHOUR;
 	static char buf[10]="";
-	if(clear_display_flag){													//очистить нужно единожды, поэтому был введен флаг очистки диспле€
+	if(clear_display_flag){													
 		clear_current_menu(X_MENU_OFFSET,Y_MENU_OFFSET);
 		draw_border(ORANGE);
 		draw_string(4,5,"SET HOURS",1,BACKGROUND_COLOR,GRAYBLUE,DotMatrix_M_Slash);
@@ -362,12 +362,6 @@ void motohour_handler(void){
 		default:
 			sprintf(buf,"%3u",motohours);
 			draw_string(45,50,buf,1,BACKGROUND_COLOR,RED,DotMatrix_M_Slash);
-//			if(motohours<100){
-//				draw_number(95,50,6,1,BACKGROUND_COLOR, BACKGROUND_COLOR, DotMatrix_M_Slash); //стер разр€д дес€тковщаписью любого числа, когда значение €ркости стало меньше 100
-//			}
-//			if(motohours<1000){
-//				draw_number(110,50,6,1,BACKGROUND_COLOR, BACKGROUND_COLOR, DotMatrix_M_Slash); //стер разр€дs щаписью любого числа, когда значение €ркости стало меньше 1000
-//			}
 			break ;
 		}
 	
@@ -378,7 +372,7 @@ void resetcounter_handler(void){
 	uint8_t c[4]={time.hour>>8,(uint8_t) time.hour,time.min,time.sec};
 	menustate=RESETCOUNTER;
 	if(clear_display_flag){
-		resetButton();													//отрисуем экран в пам€ть диспле€ единожды
+		resetButton();													
 		clear_display();
 		draw_border(RED);
 		clear_display_flag=0;
@@ -398,8 +392,8 @@ void resetcounter_handler(void){
 		case BUTTON_SELECT:
 			resetButton();
 			break;
-		case BUTTON_MENUITEMBACK:												//в обработчике ожидаем нжатие кнопки возврата, если оно происходит, то
-			return_from_handler();												//вызываем функцию возврата к меню
+		case BUTTON_MENUITEMBACK:																//в обработчике ожидаем нжатие кнопки возврата, если оно происходит, то
+			return_from_handler();																//вызываем функцию возврата к меню
 			break;
 		default:
 			draw_border(MAGENTA);
@@ -445,7 +439,7 @@ void time_tracker(void){
 
  void divider_handler(void){
 		menustate=DIVIDER;
-	if(clear_display_flag){													//очистить нужно единожды, поэтому был введен флаг очистки диспле€
+	if(clear_display_flag){																	//очистить нужно единожды, поэтому был введен флаг очистки диспле€
 		clear_current_menu(X_MENU_OFFSET,Y_MENU_OFFSET);
 		draw_border(ORANGE);
 		draw_string(10,5,"SET DIV.",1,BACKGROUND_COLOR,GRAYBLUE,DotMatrix_M_Slash);
@@ -479,7 +473,7 @@ void time_tracker(void){
 				
 		default:
 			draw_float_number(20,50,divider,"%0.3f",1,BACKGROUND_COLOR,RED,DotMatrix_M_Slash);
-			draw_float_number(120,65,voltage,"%0.1f",0,BACKGROUND_COLOR,DARKBLUE,TinyFont);//дл€ ориентировани€, чего там настроили, выведем значение напр€жени€
+			draw_float_number(120,65,voltage,"%0.1f",0,BACKGROUND_COLOR,DARKBLUE,TinyFont);		//дл€ ориентировани€, чего там настроили, выведем значение напр€жени€
 			break ;
 		}
 	 
@@ -487,7 +481,7 @@ void time_tracker(void){
  
  void voltfactor_handler(void){
 	menustate=VOLTFACTOR;
-	if(clear_display_flag){													//очистить нужно единожды, поэтому был введен флаг очистки диспле€
+	if(clear_display_flag){																		//очистить нужно единожды, поэтому был введен флаг очистки диспле€
 		clear_current_menu(X_MENU_OFFSET,Y_MENU_OFFSET);
 		draw_border(ORANGE);
 		draw_string(10,5,"SET VOF.",1,BACKGROUND_COLOR,GRAYBLUE,DotMatrix_M_Slash);
