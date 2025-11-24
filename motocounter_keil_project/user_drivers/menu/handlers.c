@@ -47,6 +47,7 @@ void startup_settings(void){
 	color|=(redcomponent<<16)|(greencomponent<<8)|bluecomponent;
 }
 
+	
 void menu_process(void){
 	switch(readButtonState()){
 		case BUTTON_LEFT:

@@ -3,6 +3,12 @@
 
 #include "stm32g0xx.h"
 #include "../wwdg/WWDG.h"
+#include "../st7735_backlight/backlight.h"
+
+#define BUTTON_LEFT_STATE            	READ_BIT(GPIOC->IDR,GPIO_IDR_ID15)
+#define BUTTON_RIGHT_STATE              READ_BIT(GPIOB->IDR,GPIO_IDR_ID7)
+#define BUTTON_OK_STATE              	READ_BIT(GPIOB->IDR,GPIO_IDR_ID6)
+
 
 extern  uint8_t  shortpress_left,
 				 shortpress_right,
@@ -10,10 +16,6 @@ extern  uint8_t  shortpress_left,
 				 longpress_left,
 				 longpress_right,
 				 longpress_ok;	
-
-extern uint8_t flagPressed;
-extern uint16_t cnt_temp;
-extern uint16_t cnt_delay;
 
 typedef struct  {
 	uint8_t sec;

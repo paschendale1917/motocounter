@@ -37,14 +37,9 @@ uint8_t  shortpress_left=0,
 				 longpress_ok=0;								 
 																	
 
-uint8_t flagPressed=0;
-uint16_t cnt_temp=0; 														//на будущее
-uint16_t cnt_delay=0;														//счетчик для задержек
-
-
 timer tim={.sec=0,
-					  .min=0,
-					  .hour=0
+			.min=0,
+			.hour=0
 			};
 
 void buttons_init(void){   
@@ -68,84 +63,88 @@ void buttons_init(void){
 	NVIC_EnableIRQ(TIM1_BRK_UP_TRG_COM_IRQn);								//глобальное разрешение прерываний при переполнении и еще некоторых событиях(описано в stm32g030xx.h)
 	TIM_EnableCounter(TIM1);
 }
-	 
 
-//обработчик прерывания при переполнении счетного регистра
- void TIM1_BRK_UP_TRG_COM_IRQHandler( void){
-	 
-	if(READ_BIT(TIM1->SR, TIM_SR_UIF)){
-		CLEAR_BIT(TIM1->SR,TIM_SR_UIF);										//сброс флага прерывания  по каналу 1 таймера
-		WWDG_reload();
-////счетчик на будущее(для считывания темепературы через заданные промежутки времени)
-//		cnt_temp++;
-//		if(cnt_temp==100){
-//			tim.sec++;
-//			cnt_temp=0;
-//			if (tim.sec>59) {
-//				tim.sec=0;
-//				tim.min++;
-//				if (tim.min>59){
-//					tim.hour++;
-//				}
-//			}
-//		}	
-	 static uint8_t count_left = 0;
-	 static uint8_t count_right = 0;
-	 static uint8_t count_ok = 0;
+void backlight_polling(void){
+	static uint16_t lcd_cntr=0;
+	if(readButtonState()==BUTTON_NOTHING){
+		lcd_cntr++;
+		if(lcd_cntr>=6000){
+			lcd_cntr=0;
+			set_brigtness(1);
+			}
+		}
+		else{
+			lcd_cntr=0;
+			set_brigtness(brightness);
+			}
+}
+void button_polling(void){
+	static uint8_t count_left = 0;
+	static uint8_t count_right = 0;
+	static uint8_t count_ok = 0;
 	
 	//button left
-	if(!(GPIOC->IDR & GPIO_IDR_ID15)){
+	if(!BUTTON_LEFT_STATE){
 	
 		if(count_left < 255)  count_left++;
 		}
 	
 	if(count_left>0&& count_left< SHORT_TIMEOUT) {
-		if((GPIOC->IDR & GPIO_IDR_ID15)){
+		if(BUTTON_LEFT_STATE){
 			shortpress_left=1;
 			count_left=0;
 		}
 	}
 	if(count_left >LONG_TIMEOUT && count_left<255) {
-		if((GPIOC->IDR & GPIO_IDR_ID15)){
+		if(BUTTON_LEFT_STATE){
 			longpress_left=1;
 			count_left=0;
 		}
 	}
 	//button ok
-		if(!(GPIOB->IDR & GPIO_IDR_ID6)){	
+		if(!BUTTON_OK_STATE){	
 			if(count_ok < 255)  count_ok++;
 		}
 		
 	if(count_ok>0&& count_ok< SHORT_TIMEOUT) {
-		if((GPIOB->IDR & GPIO_IDR_ID6)){
+		if(BUTTON_OK_STATE){
 			shortpress_ok=1;
 			count_ok=0;
 		}
 	}
 	if(count_ok >LONG_TIMEOUT && count_ok<255) {
-		if((GPIOB->IDR & GPIO_IDR_ID6)){
+		if(BUTTON_OK_STATE){
 			longpress_ok=1;
 			count_ok=0;
 		}
 	}
 	//button right
-		if(!(GPIOB->IDR & GPIO_IDR_ID7)){		
+		if(!BUTTON_RIGHT_STATE){		
 			if(count_right < 255)  count_right++;
 		}
 		
 	if(count_right>0&& count_right< SHORT_TIMEOUT) {
-		if((GPIOB->IDR & GPIO_IDR_ID7)){
+		if(BUTTON_RIGHT_STATE){
 			shortpress_right=1;
 			count_right=0;
 		}
 	}
 	if(count_right >LONG_TIMEOUT && count_right<255) {
-		if((GPIOB->IDR & GPIO_IDR_ID7)){
+		if(BUTTON_RIGHT_STATE){
 			longpress_right=1;
 			count_right=0;
 		}
 	}
-  }
+}
+
+//обработчик прерывания при переполнении счетного регистра
+ void TIM1_BRK_UP_TRG_COM_IRQHandler( void){
+	if(READ_BIT(TIM1->SR, TIM_SR_UIF)){
+		CLEAR_BIT(TIM1->SR,TIM_SR_UIF);										//сброс флага прерывания  по каналу 1 таймера
+		WWDG_reload();
+		button_polling();
+		backlight_polling();
+	}
 }
 
 
@@ -168,7 +167,7 @@ uint8_t readButtonState(void){
 	}else 
 		if(longpress_ok){
 		return BUTTON_ENTERMENU;          
-	}
+	} else
 		return BUTTON_NOTHING;
 }
 
@@ -195,3 +194,18 @@ void resetButton(void){
 			break;
 	}
  } 
+
+ 
+ //помойка
+//		cnt_temp++;
+//		if(cnt_temp==100){
+//			tim.sec++;
+//			cnt_temp=0;
+//			if (tim.sec>59) {
+//				tim.sec=0;
+//				tim.min++;
+//				if (tim.min>59){
+//					tim.hour++;
+//				}
+//			}
+//		}	

@@ -3,14 +3,9 @@
 #ifndef timer_H_
 #define timer_H_
 
-
 #include "stm32g0xx.h"
-#include "../buzzer/buzzer.h"
 
 extern 	uint16_t tick_count;
-extern uint8_t endoftimer_flag;
-
-
 
 #define TIM16_EnableCounter    			    		SET_BIT(TIM16->CR1, TIM_CR1_CEN )  //макрос включения таймера
 #define TIM16_DisableCounter    				  	CLEAR_BIT(TIM16->CR1, TIM_CR1_CEN )  //макрос выключения таймера
@@ -29,15 +24,10 @@ volatile	uint16_t hour;
 }Timer;
 
 extern  Timer time;
-extern uint8_t temperature;
 
 void init_timer(void);
 void init_pa6(void);
 void stop_counter(void);
 void start_counter(void);
-
-
-
-
 
 #endif 

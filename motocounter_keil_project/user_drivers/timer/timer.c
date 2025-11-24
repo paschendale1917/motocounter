@@ -1,16 +1,12 @@
 #include "timer.h"
-//#include "ADC.h"
 
-uint8_t temperature=0;
 uint16_t tick_count=0;
-uint8_t endoftimer_flag=0;
-
 
 Timer time={.sec=0,
 			.min=0,
 			.hour=0
 			};
-
+		
 void init_timer(void){
 	SET_BIT(RCC->APBENR2,RCC_APBENR2_TIM16EN);
 	WRITE_REG(TIM16->PSC,F_TIM16/F_PRESCALED_TIM16-1);			          		// 16 000 000/ (15999+1) =1000√ц частота таймера
@@ -35,8 +31,6 @@ void TIM16_IRQHandler( void){
 	}
 	
 }
-
-
 
 void init_pa6(void){
 	SET_BIT(RCC->IOPENR,RCC_IOPENR_GPIOAEN);
