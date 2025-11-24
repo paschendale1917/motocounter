@@ -140,7 +140,7 @@ void button_polling(void){
 //обработчик прерывания при переполнении счетного регистра
  void TIM1_BRK_UP_TRG_COM_IRQHandler( void){
 	if(READ_BIT(TIM1->SR, TIM_SR_UIF)){
-		CLEAR_BIT(TIM1->SR,TIM_SR_UIF);										//сброс флага прерывания  по каналу 1 таймера
+		CLEAR_BIT(TIM1->SR,TIM_SR_UIF);										//сброс флага прерывания 
 		WWDG_reload();
 		button_polling();
 		backlight_polling();

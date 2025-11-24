@@ -27,19 +27,19 @@
 #define BLUECOMPONENT			0x0B
 
 #define MOTOHOURS_CELL  		0x02
+#define HOUR_CELL				0x04
+#define MIN_CELL				0x06
+#define SEC_CELL				0x07
 #define BACKLIGHT_CELL     		0x08
 #define DIVIDER_CELL    		0x09
 #define VOF_CELL    			0x0B
+#define REDCOMPONENT_CELL		0x0C
+#define GREENCOMPONENT_CELL		0x0D
+#define BLUECOMPONENT_CELL		0x0E
 #define FIRSTFLAG_CELL  		0x32
 #define CELLWEAR_CELL   		0xFA
 
-#define HOUR_CELL				40
-#define MIN_CELL				42
-#define SEC_CELL				43
 
-#define RED_CELL				44
-#define GREEN_CELL				45
-#define BLUE_CELL				46
 
 extern uint8_t menustate;				//в этой переменной будем сохранять текущее состояние меню
 extern uint8_t clear_display_flag;		//флаг очистки дисплея. при переходе в обработчик нужно очистить дисплей единожды. будем делать по флагу

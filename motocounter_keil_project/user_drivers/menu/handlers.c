@@ -4,7 +4,7 @@ uint8_t menustate = MAINSCREEN;
 uint8_t mainscreen_flag=1;
 uint8_t clear_display_flag=1;
 
-uint8_t firstinit[]={0,250,0,0,0,0,50,0,151,125}; 	//массив для первоначального инита //2bytes motohours,2bytes hours,1byte min, 1byte sec,1byte bright,2bytes divider,1byte vof
+uint8_t firstinit[]={0,250,0,0,0,0,50,0,151,125,255,0,0}; 	//массив для первоначального инита //2bytes motohours,2bytes hours,1byte min, 1byte sec,1byte bright,2bytes divider,1byte vof,1byte red,1byte green,1byte blue
 uint8_t firstinit_flag=0;
 uint8_t emergency_saving_flag=0;
 volatile uint8_t redcomponent=0xFF;
@@ -40,9 +40,9 @@ void startup_settings(void){
 	brightness=eeprom_read_byte(EE24C02_ADDR,BACKLIGHT_CELL);
 	divider=(float)(eeprom_read_uint16(EE24C02_ADDR, DIVIDER_CELL))/1000;
 	vof=(float)(eeprom_read_byte(EE24C02_ADDR,VOF_CELL))/10;
-	redcomponent=eeprom_read_byte(EE24C02_ADDR,RED_CELL);
-	greencomponent=eeprom_read_byte(EE24C02_ADDR,GREEN_CELL);
-	bluecomponent=eeprom_read_byte(EE24C02_ADDR,BLUE_CELL);
+	redcomponent=eeprom_read_byte(EE24C02_ADDR,REDCOMPONENT_CELL);
+	greencomponent=eeprom_read_byte(EE24C02_ADDR,GREENCOMPONENT_CELL);
+	bluecomponent=eeprom_read_byte(EE24C02_ADDR,BLUECOMPONENT_CELL);
 	color&=~0xffffffff;
 	color|=(redcomponent<<16)|(greencomponent<<8)|bluecomponent;
 }
@@ -174,8 +174,10 @@ void backlight_handler(void){
 	}
 	switch(readButtonState()){
 		case BUTTON_SELECT:
-		resetButton();
-		break ;
+		case BUTTON_ENTERMENU:
+		case BUTTON_RESET:
+			resetButton();
+			break ;
 		case BUTTON_MENUITEMBACK:
 			eeprom_write_byte(EE24C02_ADDR,BACKLIGHT_CELL,brightness);
 			//beep(BEEP_TIME);
@@ -248,10 +250,10 @@ void reset_handler(void){
 		case BUTTON_MENUITEMBACK:
 			return_from_handler();
 			break ;
-		
 		case BUTTON_SELECT:
 		case BUTTON_LEFT:	
-		case BUTTON_RIGHT:;
+		case BUTTON_RIGHT:
+		case BUTTON_ENTERMENU:
 			resetButton();
 			break ;
 		case BUTTON_RESET:
@@ -281,7 +283,8 @@ void flashlight_handler(void){
 			break ;
 		case BUTTON_SELECT:
 		case BUTTON_LEFT:	
-		case BUTTON_RIGHT:;
+		case BUTTON_RIGHT:
+		case BUTTON_ENTERMENU:
 		case BUTTON_RESET:
 			resetButton();
 			break;
@@ -310,7 +313,7 @@ void about_handler(void){
 				draw_image(3, 53,80, 24, mipt);
 				draw_string(4,6,"Alexander Biryukov",0,BACKGROUND_COLOR,DARKBLUE,TinyFont);
 				draw_string(4,18,"bisiro@mail.ru",0,BACKGROUND_COLOR,DARKBLUE,TinyFont);
-				draw_string(4,30,"TG: Passchendaele",0,BACKGROUND_COLOR,DARKBLUE,TinyFont);
+				draw_string(4,30,"TG: Paschendale",0,BACKGROUND_COLOR,DARKBLUE,TinyFont);
 				draw_string(4,42,"Bryansk,2025",0,BACKGROUND_COLOR,DARKBLUE,TinyFont);
 				draw_border(ORANGE);
 				clear_display_flag=0;
@@ -333,8 +336,10 @@ void motohour_handler(void){
 
 	switch(readButtonState()){
 		case BUTTON_SELECT:
-		resetButton();
-		break ;
+		case BUTTON_RESET:
+		case BUTTON_ENTERMENU:
+			resetButton();
+			break ;
 		case BUTTON_MENUITEMBACK:
 			eeprom_write_uint16(EE24C02_ADDR,MOTOHOURS_CELL,motohours);
 			return_from_handler();
@@ -370,13 +375,15 @@ void motohour_handler(void){
 }
 
 void resetcounter_handler(void){
-	time=(Timer){0};
-	uint8_t c[4]={time.hour>>8,(uint8_t) time.hour,time.min,time.sec};
 	menustate=RESETCOUNTER;
 	if(clear_display_flag){
 		resetButton();													
 		clear_display();
-		draw_border(RED);
+		draw_border(MAGENTA);
+		draw_string(35,10,"SHURE?",1,BACKGROUND_COLOR,RED,DotMatrix_M_Slash);
+		draw_string(15,35,"CLICK LONG RIGHT",TINYFONT_SPACE,BACKGROUND_COLOR,RED,TinyFont);
+		draw_string(15,45,"TO RESET OR",TINYFONT_SPACE,BACKGROUND_COLOR,RED,TinyFont);
+		draw_string(15,55,"LONG LEFT TO EXIT",TINYFONT_SPACE,BACKGROUND_COLOR,RED,TinyFont);
 		clear_display_flag=0;
 	}
 	switch(readButtonState()){
@@ -384,6 +391,8 @@ void resetcounter_handler(void){
 			clear_display();
 			draw_border(GREEN);
 			draw_string(45,10,"DONE!",SYSTEMFONT_SPACE,BACKGROUND_COLOR,GREEN,DotMatrix_M_Slash);
+			time=(Timer){0};
+			uint8_t c[4]={time.hour>>8,(uint8_t)time.hour,time.min,time.sec};
 			eeprom_write_some_bytes(EE24C02_ADDR,HOUR_CELL,4,c);
 			_delay_ms(500);
 			return_from_handler();
@@ -398,11 +407,6 @@ void resetcounter_handler(void){
 			return_from_handler();																//вызываем функцию возврата к меню
 			break;
 		default:
-			draw_border(MAGENTA);
-			draw_string(35,10,"SHURE?",1,BACKGROUND_COLOR,RED,DotMatrix_M_Slash);
-			draw_string(15,35,"CLICK LONG RIGHT",TINYFONT_SPACE,BACKGROUND_COLOR,RED,TinyFont);
-			draw_string(15,45,"TO RESET OR",TINYFONT_SPACE,BACKGROUND_COLOR,RED,TinyFont);
-			draw_string(15,55,"LONG LEFT TO EXIT",TINYFONT_SPACE,BACKGROUND_COLOR,RED,TinyFont);
 			break;
 	}
 }
@@ -451,8 +455,10 @@ void time_tracker(void){
 
 	switch(readButtonState()){
 		case BUTTON_SELECT:
-		resetButton();
-		break ;
+		case BUTTON_RESET:
+		case BUTTON_ENTERMENU:
+			resetButton();
+			break ;
 		case BUTTON_MENUITEMBACK:
 			eeprom_write_uint16(EE24C02_ADDR,DIVIDER_CELL,(uint16_t)(divider*1000));
 			return_from_handler();
@@ -493,8 +499,10 @@ void time_tracker(void){
 
 	switch(readButtonState()){
 		case BUTTON_SELECT:
-		resetButton();
-		break ;
+		case BUTTON_RESET:
+		case BUTTON_ENTERMENU:
+			resetButton();
+			break ;
 		case BUTTON_MENUITEMBACK:
 			eeprom_write_byte(EE24C02_ADDR,VOF_CELL,vof*10);
 			return_from_handler();
@@ -532,11 +540,13 @@ void time_tracker(void){
 	
 	switch(readButtonState()){
 		case BUTTON_SELECT:
-		resetButton();
-		break ;
+		case BUTTON_RESET:
+		case BUTTON_ENTERMENU:
+			resetButton();
+			break ;
 		case BUTTON_MENUITEMBACK:
 			leds_off();
-			eeprom_write_byte(EE24C02_ADDR,RED_CELL,redcomponent);
+			eeprom_write_byte(EE24C02_ADDR,REDCOMPONENT_CELL,redcomponent);
 			return_from_handler();
 			break ;
 		case BUTTON_LEFT:
@@ -582,11 +592,13 @@ void time_tracker(void){
 	
 	switch(readButtonState()){
 		case BUTTON_SELECT:
-		resetButton();
-		break ;
+		case BUTTON_RESET:
+		case BUTTON_ENTERMENU:
+			resetButton();
+			break ;
 		case BUTTON_MENUITEMBACK:
 			leds_off();
-			eeprom_write_byte(EE24C02_ADDR,GREEN_CELL,greencomponent);
+			eeprom_write_byte(EE24C02_ADDR,GREENCOMPONENT_CELL,greencomponent);
 			return_from_handler();
 			break ;
 		case BUTTON_LEFT:
@@ -632,11 +644,13 @@ void time_tracker(void){
 	
 	switch(readButtonState()){
 		case BUTTON_SELECT:
-		resetButton();
-		break ;
+		case BUTTON_RESET:
+		case BUTTON_ENTERMENU:
+			resetButton();
+			break ;
 		case BUTTON_MENUITEMBACK:
 			leds_off();
-			eeprom_write_byte(EE24C02_ADDR,BLUE_CELL,bluecomponent);
+			eeprom_write_byte(EE24C02_ADDR,BLUECOMPONENT_CELL,bluecomponent);
 			return_from_handler();
 			break ;
 		case BUTTON_LEFT:
