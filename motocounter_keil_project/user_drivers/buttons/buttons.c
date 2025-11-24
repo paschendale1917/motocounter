@@ -38,8 +38,8 @@ uint8_t  shortpress_left=0,
 																	
 
 uint8_t flagPressed=0;
-uint16_t cnt_temp=0; //на будущее
-uint16_t cnt_delay=0;//счетчик дл€ задержек
+uint16_t cnt_temp=0; 														//на будущее
+uint16_t cnt_delay=0;														//счетчик дл€ задержек
 
 
 timer tim={.sec=0,
@@ -48,71 +48,47 @@ timer tim={.sec=0,
 			};
 
 void buttons_init(void){   
-	SET_BIT(RCC->IOPENR,RCC_IOPENR_GPIOBEN); //тактирование порта B
-	MODIFY_REG(GPIOB->MODER,GPIO_MODER_MODE6,0x00<<GPIO_MODER_MODE6_Pos); //mode[0:0] режим входа дл€ пина PB6
-	MODIFY_REG(GPIOB->PUPDR,GPIO_PUPDR_PUPD6,0x01<<GPIO_PUPDR_PUPD6_Pos); //подт€га к питанию
+	SET_BIT(RCC->IOPENR,RCC_IOPENR_GPIOBEN); 								//тактирование порта B
+	MODIFY_REG(GPIOB->MODER,GPIO_MODER_MODE6,0x00<<GPIO_MODER_MODE6_Pos); 	//mode[0:0] режим входа дл€ пина PB6
+	MODIFY_REG(GPIOB->PUPDR,GPIO_PUPDR_PUPD6,0x01<<GPIO_PUPDR_PUPD6_Pos); 	//подт€га к питанию
 
-	MODIFY_REG(GPIOB->MODER,GPIO_MODER_MODE7,0x00<<GPIO_MODER_MODE7_Pos); //mode[0:0] режим входа дл€ пина PB7
+	MODIFY_REG(GPIOB->MODER,GPIO_MODER_MODE7,0x00<<GPIO_MODER_MODE7_Pos); 	//mode[0:0] режим входа дл€ пина PB7
 	MODIFY_REG(GPIOB->PUPDR,GPIO_PUPDR_PUPD7,0x01<<GPIO_PUPDR_PUPD7_Pos);
 	
-	SET_BIT(RCC->IOPENR,RCC_IOPENR_GPIOCEN); //тактирование порта C
+	SET_BIT(RCC->IOPENR,RCC_IOPENR_GPIOCEN); 								//тактирование порта C
 	MODIFY_REG(GPIOC->MODER,GPIO_MODER_MODE15,0x00<<GPIO_MODER_MODE15_Pos); //mode[0:0] режим входа дл€ пина PC15
 	MODIFY_REG(GPIOC->PUPDR,GPIO_PUPDR_PUPD15,0x01<<GPIO_PUPDR_PUPD15_Pos);	
 
 	SET_BIT(RCC->APBENR2,RCC_APBENR2_TIM1EN);
-
-	SET_BIT(TIM1->CR1,TIM_CR1_ARPE);//Ѕуферизаци€ регистров таймера включение
-	CLEAR_BIT(TIM1->CR1,TIM_CR1_CMS);//The counter counts up or down depending on the direction bit
-	CLEAR_BIT(TIM1->CR1,TIM_CR1_DIR);//счет вверх
-	
-	SET_BIT(TIM1->DIER,TIM_DIER_UIE);//включаем прерывание при переполнении счетчика
-	SET_BIT(TIM1->DIER,TIM_DIER_CC1IE);//включаем прерывание при совпадении в значений в счетном регистре и регистре сравнени€ CCR1//использовать дл€ задержек
-	SET_BIT(TIM1->CR2,TIM_CR2_CCPC);
-	WRITE_REG(TIM1->CCR1,1000);
-	WRITE_REG(TIM1->PSC,TIM1_PRESCALE);
-	WRITE_REG(TIM1->ARR,TIM1_AUTORELOAD);//TIM1->ARR = 100; 
-	NVIC_EnableIRQ(TIM1_CC_IRQn);         //глобальное разрешeние прерываний при совпадении
-	NVIC_EnableIRQ(TIM1_BRK_UP_TRG_COM_IRQn);//глобальное разрешение прерываний при переполнении и еще некоторых событи€х(описано в stm32g030xx.h)
+	CLEAR_BIT(TIM1->CR1,TIM_CR1_CMS);										//The counter counts up or down depending on the direction bit
+	CLEAR_BIT(TIM1->CR1,TIM_CR1_DIR);										//счет вверх
+	SET_BIT(TIM1->DIER,TIM_DIER_UIE);										//включаем прерывание при переполнении счетчика
+	WRITE_REG(TIM1->PSC,F_TIM1/F_TIM1_PRESCALED-1); 
+	WRITE_REG(TIM1->ARR,TIM1_AUTORELOAD);
+	NVIC_EnableIRQ(TIM1_BRK_UP_TRG_COM_IRQn);								//глобальное разрешение прерываний при переполнении и еще некоторых событи€х(описано в stm32g030xx.h)
 	TIM_EnableCounter(TIM1);
 }
- void TIM1_CC_IRQHandler(void){
-		 if(READ_BIT(TIM1->SR, TIM_SR_CC1IF)){
-		CLEAR_BIT(TIM1->SR,TIM_SR_CC1IF);
-	 }
-		 cnt_delay++;
-
-}
- 
-
-//void _delay_ms_tim1(uint16_t ms){
-//	cnt_delay=ms;
-//	SET_BIT(TIM1->DIER,TIM_DIER_CC1IE);//включаем прерывание при совпадении в значений в счетном регистре и регистре сравнени€ CCR1//использовать дл€ задержек
-//	CLEAR_BIT(TIM1->SR,TIM_SR_CC1IF);//сброс флага прерывани€  по каналу 2 таймера
-
-//	}	 
+	 
 
 //обработчик прерывани€ при переполнении счетного регистра
  void TIM1_BRK_UP_TRG_COM_IRQHandler( void){
 	 
-	if(READ_BIT(TIM1->SR, TIM_SR_CC1IF)){
-		CLEAR_BIT(TIM1->SR,TIM_SR_UIF);//сброс флага прерывани€  по каналу 1 таймера
-}
-
-	
-//		 //счетчик на будущее(дл€ считывани€ темепературы через заданные промежутки времени)
-//	cnt_temp++;
-//	if(cnt_temp==100){
-//		tim.sec++;
-//		cnt_temp=0;
-//		if (tim.sec>59) {
-//			tim.sec=0;
-//			tim.min++;
-//			if (tim.min>59){
-//				tim.hour++;
+	if(READ_BIT(TIM1->SR, TIM_SR_UIF)){
+		CLEAR_BIT(TIM1->SR,TIM_SR_UIF);										//сброс флага прерывани€  по каналу 1 таймера
+		WWDG_reload();
+////счетчик на будущее(дл€ считывани€ темепературы через заданные промежутки времени)
+//		cnt_temp++;
+//		if(cnt_temp==100){
+//			tim.sec++;
+//			cnt_temp=0;
+//			if (tim.sec>59) {
+//				tim.sec=0;
+//				tim.min++;
+//				if (tim.min>59){
+//					tim.hour++;
+//				}
 //			}
-//		}
-//	}
-//	
+//		}	
 	 static uint8_t count_left = 0;
 	 static uint8_t count_right = 0;
 	 static uint8_t count_ok = 0;
@@ -169,10 +145,8 @@ void buttons_init(void){
 			count_right=0;
 		}
 	}
+  }
 }
-
-
-
 
 
 uint8_t readButtonState(void){

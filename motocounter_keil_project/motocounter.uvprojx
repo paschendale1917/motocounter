@@ -52,7 +52,7 @@
           <OutputName>motocounter_g030_improved</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>0</CreateHexFile>
+          <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
           <ListingPath>.\Listings\</ListingPath>
@@ -667,6 +667,21 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>WWDG</GroupName>
+          <Files>
+            <File>
+              <FileName>WWDG.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\user_drivers\wwdg\WWDG.c</FilePath>
+            </File>
+            <File>
+              <FileName>WWDG.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\user_drivers\wwdg\WWDG.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>::CMSIS</GroupName>
         </Group>
         <Group>
@@ -711,5 +726,14 @@
       </file>
     </files>
   </RTE>
+
+  <LayerInfo>
+    <Layers>
+      <Layer>
+        <LayName>motocounter</LayName>
+        <LayPrjMark>1</LayPrjMark>
+      </Layer>
+    </Layers>
+  </LayerInfo>
 
 </Project>

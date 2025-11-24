@@ -5,7 +5,7 @@ int main(void){
 	hardware_init();
 	menu_init(&main_menu_item_1);                                                       //инициализируем меню и устанавливаем указатель на первый пункт
 	//display_current_menu(X_MENU_OFFSET,Y_MENU_OFFSET);                                  //отрисовываем начальное меню	
-
+	
 	while(1){
 		
 	switch(menustate){

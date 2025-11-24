@@ -148,24 +148,7 @@
           <Name>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC2000 -FN1 -FF0STM32G0xx_32 -FS08000000 -FL08000 -FP0($$Device:STM32G030F6Px$CMSIS\Flash\STM32G0xx_32.FLM))</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
-      <Breakpoint>
-        <Bp>
-          <Number>0</Number>
-          <Type>0</Type>
-          <LineNumber>42</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134231290</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\user_drivers\menu\handlers.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\motocounter_g030_improved\user_drivers/menu/handlers.c\42</Expression>
-        </Bp>
-      </Breakpoint>
+      <Breakpoint/>
       <WatchWindow1>
         <Ww>
           <count>0</count>
@@ -257,6 +240,11 @@
           <WinNumber>1</WinNumber>
           <ItemText>greencomponent</ItemText>
         </Ww>
+        <Ww>
+          <count>18</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>tim.sec,0x0A</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>
@@ -346,8 +334,16 @@
           <WinId>35903</WinId>
         </Entry>
         <Entry>
+          <Name>System Viewer\TIM1</Name>
+          <WinId>35900</WinId>
+        </Entry>
+        <Entry>
           <Name>System Viewer\TIM16</Name>
           <WinId>35902</WinId>
+        </Entry>
+        <Entry>
+          <Name>System Viewer\WWDG</Name>
+          <WinId>35901</WinId>
         </Entry>
       </SystemViewers>
       <DebugDescription>
@@ -458,7 +454,7 @@
 
   <Group>
     <GroupName>spi</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -490,7 +486,7 @@
 
   <Group>
     <GroupName>st7735</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -730,7 +726,7 @@
 
   <Group>
     <GroupName>handlers</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -762,7 +758,7 @@
 
   <Group>
     <GroupName>buttons</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -794,7 +790,7 @@
 
   <Group>
     <GroupName>buzzer</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -826,7 +822,7 @@
 
   <Group>
     <GroupName>timer</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -890,7 +886,7 @@
 
   <Group>
     <GroupName>i2c</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -922,7 +918,7 @@
 
   <Group>
     <GroupName>eeprom</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -979,6 +975,38 @@
       <bDave2>0</bDave2>
       <PathWithFileName>.\user_drivers\ws2812\ws2812_dma.h</PathWithFileName>
       <FilenameWithoutPath>ws2812_dma.h</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+  </Group>
+
+  <Group>
+    <GroupName>WWDG</GroupName>
+    <tvExp>1</tvExp>
+    <tvExpOptDlg>0</tvExpOptDlg>
+    <cbSel>0</cbSel>
+    <RteFlg>0</RteFlg>
+    <File>
+      <GroupNumber>16</GroupNumber>
+      <FileNumber>43</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>.\user_drivers\wwdg\WWDG.c</PathWithFileName>
+      <FilenameWithoutPath>WWDG.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>16</GroupNumber>
+      <FileNumber>44</FileNumber>
+      <FileType>5</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>.\user_drivers\wwdg\WWDG.h</PathWithFileName>
+      <FilenameWithoutPath>WWDG.h</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

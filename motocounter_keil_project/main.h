@@ -1,6 +1,7 @@
 #ifndef main_H_
 #define main_H_
 
+#define F_CPU 64000000UL
 
 //8 €чейка в еепромке дохла€
 #include "/user_drivers/menu/menu.h"

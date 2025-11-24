@@ -114,7 +114,7 @@ float get_voltage_dma(void){
 
 //здесь получаем сырые данные ацп от 13 канала, к которому подключен внутренний источник опорного напряжения
 uint16_t get_intref_ch13(void){
-  SET_BIT(ADC1->CR, ADC_CR_ADSTP);
+	SET_BIT(ADC1->CR, ADC_CR_ADSTP);
 	SET_BIT(ADC1->CHSELR,ADC_CHSELR_CHSEL13);
 	while(!(READ_BIT(ADC1->ISR, ADC_ISR_CCRDY)));
 	if(!(ADC1->CR&ADC_CR_ADEN)){
@@ -124,7 +124,7 @@ uint16_t get_intref_ch13(void){
 	SET_BIT(ADC->CCR, ADC_CCR_VREFEN);
 	SET_BIT(ADC1->CR, ADC_CR_ADSTART);
 	_delay_ms(2); //обождем, пока устаканится
-  return (uint16_t)ADC1->DR;
+	return (uint16_t)ADC1->DR;
 }
 
 //здесь рассчитываем напряжение питания

@@ -18,18 +18,18 @@ float vof=12.5;										//напряжение включения счетчика моточасов
 void hardware_init(void){
 	set_sysclk64();
 	SysTick_init();
-	buttons_init();
 	eeprom_init(EE24C02_ADDR);
 	startup_settings();
     st7735_init(brightness);
 	init_buzzer();
 	init_timer();
 	init_adc_dma();
+	buttons_init();
 	background(BACKGROUND_COLOR); 
 	init_after_hardreset();
 	init_ws2812();
 	start_effect();
-
+	init_wwdg();
 }
 
 void startup_settings(void){
@@ -218,6 +218,7 @@ void hardreset(void){
 	_delay_ms(2);
 	NVIC_SystemReset();//перезагрузка
 }
+
 void init_after_hardreset(void){
 	firstinit_flag=eeprom_read_byte(EE24C02_ADDR,FIRSTFLAG_CELL);
 	if(firstinit_flag==0){
@@ -305,10 +306,10 @@ void about_handler(void){
 			if(clear_display_flag){
 				resetButton();													//отрисуем экран в память дисплея единожды
 				clear_display();
-				draw_image(0, 54,80, 24, mipt);
+				draw_image(3, 53,80, 24, mipt);
 				draw_string(4,6,"Alexander Biryukov",0,BACKGROUND_COLOR,DARKBLUE,TinyFont);
 				draw_string(4,18,"bisiro@mail.ru",0,BACKGROUND_COLOR,DARKBLUE,TinyFont);
-				draw_string(4,30,"TG: Paschendale",0,BACKGROUND_COLOR,DARKBLUE,TinyFont);
+				draw_string(4,30,"TG: Passchendaele",0,BACKGROUND_COLOR,DARKBLUE,TinyFont);
 				draw_string(4,42,"Bryansk,2025",0,BACKGROUND_COLOR,DARKBLUE,TinyFont);
 				draw_border(ORANGE);
 				clear_display_flag=0;

@@ -11,6 +11,7 @@
 #include "../eeprom/eeprom.h"
 #include "../ws2812/ws2812_dma.h"
 
+
 #define MENU_PROCESS			0xFF
 #define MAINSCREEN				0x00
 #define RESET                  	0x01

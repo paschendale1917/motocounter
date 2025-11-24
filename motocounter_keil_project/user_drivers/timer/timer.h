@@ -18,8 +18,9 @@ extern uint8_t endoftimer_flag;
 #define TIM16_DisableInterruptUpdate	   			CLEAR_BIT(TIM16->DIER,TIM_DIER_UIE) // макрос разрешения обновления прерываний
 
 
-#define F_TIM 										64000000 
-#define F_PRESCALED_TIM  							1000
+#define F_TIM16 									64000000 
+#define F_PRESCALED_TIM16  							1000
+#define TIM16_AUTORELOAD                   			1000
 
 typedef struct  {
 volatile	uint8_t sec;
