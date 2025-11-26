@@ -272,7 +272,7 @@ void flashlight_handler(void){
 	}
 	background(WHITE);
 	set_brigtness(100);
-	setcolor(WHITE_LED);
+	setcolor(0xDCDCDC);
 	send_data_leds();
 	switch(readButtonState()){
 		case BUTTON_MENUITEMBACK:
