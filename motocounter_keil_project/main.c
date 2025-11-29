@@ -1,6 +1,5 @@
 #include "main.h"
 
-
 int main(void){
 	hardware_init();
 	menu_init(&main_menu_item_1);                                                       //инициализируем меню и устанавливаем указатель на первый пункт
@@ -47,7 +46,6 @@ int main(void){
 				break;
 			default:
 				menu_process();
-				
 				break;
 						
 		}

@@ -16,7 +16,7 @@ void set_sysclk64(void){
 	
 	RCC->CFGR|=(1<<RCC_CFGR_HPRE_Pos);										//AHB prescaler 1 //шина AHB=SYSCLK/1=64MHz
 	
-	MODIFY_REG(RCC->CFGR,RCC_CFGR_PPRE,0x00<<RCC_CFGR_PPRE_Pos);			//APB prescaler 4;APB = 64/4=16 MHz //таймеры TIM2 и TIM3 32 MHz
+	MODIFY_REG(RCC->CFGR,RCC_CFGR_PPRE,0x00<<RCC_CFGR_PPRE_Pos);			//APB prescaler 4;APB = 64/4=16 MHz //таймеры TIM16 и TIM17 64 MHz  в ранних ревизиях чипа. смотреть errata
 	
 	//делитель для настройки частоты работы ADC
 	RCC->PLLCFGR&=~RCC_PLLCFGR_PLLP_Msk;									//очистка на всякий случай
