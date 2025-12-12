@@ -1,5 +1,3 @@
-//счетчик секунд на таймере TIM16
-
 #ifndef timer_H_
 #define timer_H_
 
