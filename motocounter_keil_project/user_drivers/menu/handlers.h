@@ -10,6 +10,7 @@
 #include "../timer/timer.h"
 #include "../eeprom/eeprom.h"
 #include "../ws2812/ws2812_dma.h"
+#include "../standby_led/standby_led.h"
 
 
 #define MENU_PROCESS			0xFF

@@ -70,14 +70,27 @@ void backlight_polling(void){
 		lcd_cntr++;
 		if(lcd_cntr>=6000){
 			lcd_cntr=0;
-			set_brigtness(1);
+			set_brigtness(0);
+			standby_led_flag=1;
+//			menustate=MAINSCREEN;
+//			START_Tx;
+//			send_command(ST7735_SLPIN);
+//			send_command(ST7735_DISPOFF);
+//			STOP_Tx;
 			}
 		}
 		else{
 			lcd_cntr=0;
 			set_brigtness(brightness);
+			TIM16->CCR1=0;
+			standby_led_flag=0;
+//			START_Tx;
+//			send_command(ST7735_SLPOUT);
+//			send_command(ST7735_DISPON);
+//			STOP_Tx;
 			}
 }
+
 void button_polling(void){
 	static uint8_t count_left = 0;
 	static uint8_t count_right = 0;

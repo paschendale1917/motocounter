@@ -5,10 +5,10 @@
 #include "../SysTick/systick_delay.h"
 
 #define F_BUZ_TIM 							64000000 					//зависит от настроек в секции RCC
-#define F_BUZ_PWM 							2000						//частота ШИМ 4 КГц(резонансная частота буззера)
+#define F_BUZ_PWM 							1500						//частота ШИМ 4 КГц(резонансная частота буззера)
 #define BUZ_TIM_PSC 						0   						//делитель частоты таймeра
 
-#define BEEP_TIME							30
+#define BEEP_TIME							35
 
 #define BUZ_1    		 					1000
 #define BUZ_0 								0

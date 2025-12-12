@@ -46,6 +46,10 @@ int main(void){
 				break;
 			default:
 				menu_process();
+//			for(uint16_t i=0;i<1000;i++){
+//				set_led(i);
+//				_delay_ms(200);
+//			}
 				break;
 						
 		}

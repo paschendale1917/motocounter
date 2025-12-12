@@ -141,6 +141,8 @@
 void init_ports(void);
 void st7735_init(uint8_t bright);
 void init_st7735(void);
+void send_command(uint8_t command);
+void send_data(uint8_t data);
 void draw_rect(uint16_t xstart, uint16_t ystart, uint16_t lenth, uint16_t height, uint16_t color);
 void background(uint16_t color);
 void draw_circle(uint8_t x, uint8_t y, uint8_t r, uint16_t color);

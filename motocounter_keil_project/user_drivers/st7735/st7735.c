@@ -63,8 +63,6 @@ void st7735_multiply_send(const uint8_t *data, uint32_t num){
 }
 
 void st7735_init(uint8_t bright){
-	init_backlight();
-	set_brigtness(bright);
 	init_ports();
 	init_master_spi();
 	START_Tx;
@@ -109,6 +107,9 @@ void st7735_init(uint8_t bright){
 	send_command(ST7735_DISPON);
 	_delay_ms(ST7735_SPI_TIMEOUT);
 	STOP_Tx;
+	
+	init_backlight();
+	set_brigtness(bright);
 }
 
 
@@ -345,12 +346,12 @@ void draw_VDDA(uint16_t xpos,  uint16_t ypos,int8_t space,uint16_t bcolor,  uint
 void draw_voltage(uint16_t xpos,  uint16_t ypos,int8_t space,uint16_t bcolor,  uint16_t fcolor, uint8_t *font){	
 	uint8_t nt=0;
 	voltage=((REFERENCE/4096)*get_adcdata_dma())/divider;
-	draw_float_number(xpos,ypos,voltage,"%0.2f",space,bcolor, fcolor, font);
+	draw_float_number(xpos,ypos,voltage,"%0.1f",space,bcolor, fcolor, font);
 	if(voltage>=10.0){
-		nt=4;
-	} else if(voltage<10.0){
 		nt=3;
-		draw_rect(xpos+4*font[1]+4,ypos,font[0],font[1],bcolor);
+	} else if(voltage<10.0){
+		nt=2;
+		draw_rect(xpos+3*font[1]+4,ypos,font[0],font[1],bcolor);
 	}
 	draw_char(xpos+nt*font[0]+4,ypos, 'v',bcolor,fcolor,font);
 	  

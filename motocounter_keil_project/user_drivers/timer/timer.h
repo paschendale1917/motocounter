@@ -4,6 +4,7 @@
 #define timer_H_
 
 #include "stm32g0xx.h"
+#include "../standby_led/standby_led.h"
 
 extern 	uint16_t tick_count;
 
@@ -14,8 +15,8 @@ extern 	uint16_t tick_count;
 
 
 #define F_TIM16 									64000000 
-#define F_PRESCALED_TIM16  							1000
-#define TIM16_AUTORELOAD                   			1000
+#define F_PRESCALED_TIM16  							100000
+#define TIM16_AUTORELOAD                   			100                //не отсчитываю секунду сразу для того, чтобы можно было пошимить на ножке PA6 с приемлемой частотой
 
 typedef struct  {
 volatile	uint8_t sec;

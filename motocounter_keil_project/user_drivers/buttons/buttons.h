@@ -4,6 +4,9 @@
 #include "stm32g0xx.h"
 #include "../wwdg/WWDG.h"
 #include "../st7735_backlight/backlight.h"
+#include "../standby_led/standby_led.h"
+#include "../st7735/st7735.h"
+#include "../menu/handlers.h"
 
 #define BUTTON_LEFT_STATE            	READ_BIT(GPIOC->IDR,GPIO_IDR_ID15)
 #define BUTTON_RIGHT_STATE              READ_BIT(GPIOB->IDR,GPIO_IDR_ID7)

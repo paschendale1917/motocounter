@@ -29,7 +29,8 @@ void hardware_init(void){
 	init_after_hardreset();
 	init_ws2812();
 	start_effect();
-	init_wwdg();
+	//init_wwdg();
+	init_led();
 }
 
 void startup_settings(void){
